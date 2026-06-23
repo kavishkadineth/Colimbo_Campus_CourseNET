@@ -14,6 +14,12 @@ class Course extends Model
         'banner',
         'course_fee',
         'application_fee',
+        'application_start_date',
+        'application_end_date',
+        'program_start_date',
+        'program_end_date',
+        'status',
+        'intake',
         'requirements',
         'more_details_link'
     ];

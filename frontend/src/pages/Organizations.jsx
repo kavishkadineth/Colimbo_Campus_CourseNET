@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { apiClient } from "../lib/auth";
 
 function Organizations() {
   const [organizations, setOrganizations] = useState([]);
@@ -11,8 +11,8 @@ function Organizations() {
   const [editType, setEditType] = useState("");
 
   const fetchOrganizations = () => {
-    axios
-      .get("http://127.0.0.1:8000/api/organizations")
+    apiClient
+      .get("/organizations")
       .then((response) => {
         setOrganizations(response.data);
       })
@@ -26,8 +26,8 @@ function Organizations() {
   }, []);
 
   const addOrganization = () => {
-    axios
-      .post("http://127.0.0.1:8000/api/organizations", {
+    apiClient
+      .post("/organizations", {
         name,
         type,
       })
@@ -46,8 +46,8 @@ function Organizations() {
       return;
     }
 
-    axios
-      .delete(`http://127.0.0.1:8000/api/organizations/${id}`)
+    apiClient
+      .delete(`/organizations/${id}`)
       .then(() => {
         fetchOrganizations();
       })
@@ -63,8 +63,8 @@ function Organizations() {
   };
 
   const updateOrganization = () => {
-    axios
-      .put(`http://127.0.0.1:8000/api/organizations/${editId}`, {
+    apiClient
+      .put(`/organizations/${editId}`, {
         name: editName,
         type: editType,
       })
