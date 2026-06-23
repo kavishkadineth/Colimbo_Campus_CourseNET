@@ -1,4 +1,4 @@
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import AdminPanel from "../../frontend/src/pages/AdminPanel.jsx";
@@ -41,13 +41,20 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="container mt-4">
-        <AdminPanel
-          user={user}
-          onLogin={setUser}
-          onLogout={logout}
-          basePath=""
-        />
+      <div className="container-fluid py-4 px-4">
+        <Routes>
+          <Route
+            path="/*"
+            element={
+              <AdminPanel
+                user={user}
+                onLogin={setUser}
+                onLogout={logout}
+                basePath=""
+              />
+            }
+          />
+        </Routes>
       </div>
     </BrowserRouter>
   );
