@@ -147,11 +147,11 @@ function AdminUsers() {
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-4">Users</h2>
+      <h2 className="mb-4">Admin Users</h2>
 
       <div className="card shadow mb-4">
         <div className="card-header">
-          <h4 className="mb-0">Add User</h4>
+          <h4 className="mb-0">Add Admin</h4>
         </div>
 
         <div className="card-body">
@@ -191,7 +191,6 @@ function AdminUsers() {
                 >
                   <option value="system_admin">System Admin</option>
                   <option value="lecture_admin">Lecture Admin</option>
-                  <option value="user">User</option>
                 </select>
               </div>
 
@@ -221,7 +220,7 @@ function AdminUsers() {
             </div>
 
             <button className="btn btn-primary" disabled={loading}>
-              {loading ? "Adding..." : "Add User"}
+              {loading ? "Adding..." : "Add Admin"}
             </button>
           </form>
         </div>
@@ -230,7 +229,7 @@ function AdminUsers() {
       {editId && (
         <div className="card shadow mb-4">
           <div className="card-header bg-warning">
-            <h4 className="mb-0">Edit User</h4>
+            <h4 className="mb-0">Edit Admin</h4>
           </div>
 
           <div className="card-body">
@@ -267,7 +266,6 @@ function AdminUsers() {
                   >
                     <option value="system_admin">System Admin</option>
                     <option value="lecture_admin">Lecture Admin</option>
-                    <option value="user">User</option>
                   </select>
                 </div>
 
@@ -295,7 +293,7 @@ function AdminUsers() {
               </div>
 
               <button className="btn btn-success me-2" disabled={editLoading}>
-                {editLoading ? "Updating..." : "Update User"}
+                {editLoading ? "Updating..." : "Update Admin"}
               </button>
 
               <button
@@ -312,7 +310,7 @@ function AdminUsers() {
 
       <div className="card shadow">
         <div className="card-header">
-          <h4 className="mb-0">Current Users</h4>
+          <h4 className="mb-0">Current Admins</h4>
         </div>
 
         <div className="card-body">
@@ -360,7 +358,7 @@ function AdminUsers() {
                 {adminUsers.length === 0 && (
                   <tr>
                     <td colSpan="6" className="text-center">
-                      No users found
+                      No admins found
                     </td>
                   </tr>
                 )}

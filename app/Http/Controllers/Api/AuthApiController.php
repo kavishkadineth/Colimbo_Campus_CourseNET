@@ -86,7 +86,8 @@ class AuthApiController extends Controller
     public function adminUsers()
     {
         return response()->json(
-            User::select('id', 'name', 'email', 'role', 'created_at')
+            User::whereIn('role', [User::ROLE_SYSTEM_ADMIN, User::ROLE_LECTURE_ADMIN])
+                ->select('id', 'name', 'email', 'role', 'created_at')
                 ->orderBy('name')
                 ->get()
         );
@@ -98,7 +99,7 @@ class AuthApiController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', Rule::in([User::ROLE_SYSTEM_ADMIN, User::ROLE_LECTURE_ADMIN, User::ROLE_USER])],
+            'role' => ['required', Rule::in([User::ROLE_SYSTEM_ADMIN, User::ROLE_LECTURE_ADMIN])],
         ]);
 
         $user = User::create([
@@ -116,7 +117,7 @@ class AuthApiController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
-            'role' => ['required', Rule::in([User::ROLE_SYSTEM_ADMIN, User::ROLE_LECTURE_ADMIN, User::ROLE_USER])],
+            'role' => ['required', Rule::in([User::ROLE_SYSTEM_ADMIN, User::ROLE_LECTURE_ADMIN])],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 

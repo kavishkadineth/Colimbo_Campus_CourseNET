@@ -54,7 +54,7 @@ function AdminPanel({ user, onLogin, onLogout, basePath = "/admin" }) {
 
         {isSystemAdmin && (
           <Link to={pathFor("/users")} className="btn btn-primary">
-            Users
+            Admins
           </Link>
         )}
       </nav>
