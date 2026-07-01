@@ -2,16 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="CourseNET – Discover, explore, and apply to courses from top organizations. Your gateway to academic excellence." />
-    <title>CourseNET – Course Discovery Platform</title>
+    <title>CourseNET Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      window.addEventListener("error", function(e) {
+        fetch("http://localhost:9999/", { method: "POST", body: e.error ? e.error.stack : String(e.message) });
+      });
+      window.addEventListener("unhandledrejection", function(e) {
+        fetch("http://localhost:9999/", { method: "POST", body: String(e.reason) });
+      });
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

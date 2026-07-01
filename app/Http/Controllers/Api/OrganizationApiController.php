@@ -20,6 +20,7 @@ class OrganizationApiController extends Controller
         $organization = Organization::create([
             'name' => $request->name,
             'type' => $request->type,
+            'department' => $request->department,
         ]);
 
         return response()->json($organization, 201);
@@ -32,6 +33,7 @@ class OrganizationApiController extends Controller
         $organization->update([
             'name' => $request->name,
             'type' => $request->type,
+            'department' => $request->department,
         ]);
 
         return response()->json($organization);

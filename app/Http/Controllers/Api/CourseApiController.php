@@ -15,17 +15,16 @@ class CourseApiController extends Controller
         );
     }
 
+    public function show($id)
+    {
+        return response()->json(
+            Course::with('organization')->findOrFail($id)
+        );
+    }
+
     public function store(Request $request)
     {
-        $course = Course::create([
-            'organization_id' => $request->organization_id,
-            'course_name' => $request->course_name,
-            'description' => $request->description,
-            'course_fee' => $request->course_fee,
-            'application_fee' => $request->application_fee,
-            'requirements' => $request->requirements,
-            'more_details_link' => $request->more_details_link,
-        ]);
+        $course = Course::create($this->courseData($request));
 
         return response()->json($course, 201);
     }
@@ -34,17 +33,35 @@ class CourseApiController extends Controller
     {
         $course = Course::findOrFail($id);
 
-        $course->update([
-            'organization_id' => $request->organization_id,
-            'course_name' => $request->course_name,
-            'description' => $request->description,
-            'course_fee' => $request->course_fee,
-            'application_fee' => $request->application_fee,
-            'requirements' => $request->requirements,
-            'more_details_link' => $request->more_details_link,
-        ]);
+        $course->update($this->courseData($request));
 
         return response()->json($course);
+    }
+
+    private function courseData(Request $request): array
+    {
+        $data = [
+            'organization_id' => $request->organization_id,
+            'course_name' => $request->course_name,
+            'description' => $request->filled('description') ? $request->description : null,
+            'course_fee' => $request->filled('course_fee') ? $request->course_fee : null,
+            'application_fee' => $request->filled('application_fee') ? $request->application_fee : null,
+            'application_start_date' => $request->filled('application_start_date') ? $request->application_start_date : null,
+            'application_end_date' => $request->filled('application_end_date') ? $request->application_end_date : null,
+            'program_start_date' => $request->filled('program_start_date') ? $request->program_start_date : null,
+            'program_end_date' => $request->filled('program_end_date') ? $request->program_end_date : null,
+            'status' => $request->filled('status') ? $request->status : null,
+            'intake' => $request->filled('intake') ? $request->intake : null,
+            'requirements' => $request->filled('requirements') ? $request->requirements : null,
+            'more_details_link' => $request->filled('more_details_link') ? $request->more_details_link : null,
+        ];
+
+        if ($request->hasFile('flyer')) {
+            $path = $request->file('flyer')->store('courses', 'public');
+            $data['flyer'] = '/storage/' . $path;
+        }
+
+        return $data;
     }
 
     public function destroy($id)
