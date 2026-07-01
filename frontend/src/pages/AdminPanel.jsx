@@ -1,4 +1,4 @@
-import { Link, Navigate, Route, Routes } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import AdminUsers from "./AdminUsers";
 import CourseDetails from "./CourseDetails";
@@ -13,52 +13,130 @@ function AdminPanel({ user, onLogin, onLogout, basePath = "/admin" }) {
   const isAdmin = isSystemAdmin || isLectureAdmin;
   const roleLabel = isSystemAdmin ? "System Admin" : "Lecture Admin";
   const pathFor = (path = "") => `${basePath}${path}` || "/";
-  const adminHome = isSystemAdmin ? pathFor("/users") : pathFor();
+  const adminHome = pathFor();
   const loginPath = pathFor("/login");
+
+  const location = useLocation();
 
   if (user && !isAdmin) {
     return <Navigate to="/" replace />;
   }
 
-  const adminHeader = user && (
-    <>
-      <div className="d-flex align-items-center justify-content-between mb-4">
-        <h1 className="mb-0">Admin Panel</h1>
+  const navItems = [
+    ...(isAdmin ? [
+      {
+        to: pathFor(),
+        label: "Dashboard",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        ),
+      },
+      {
+        to: pathFor("/organizations"),
+        label: "Organizations",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        ),
+      },
+      {
+        to: pathFor("/courses"),
+        label: "Courses",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        ),
+      },
+    ] : []),
+    ...(isSystemAdmin ? [
+      {
+        to: pathFor("/users"),
+        label: "Admin Users",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        ),
+      },
+    ] : []),
+  ];
 
-        <div className="d-flex align-items-center gap-3">
-          <span>{user.name} ({roleLabel})</span>
-          <button className="btn btn-outline-secondary btn-sm" onClick={onLogout}>
-            Logout
+  const isActive = (path) => {
+    if (path === pathFor()) {
+      return location.pathname === path || location.pathname === path + "/";
+    }
+    return location.pathname.startsWith(path);
+  };
+
+  const adminSidebar = user && (
+    <aside className="admin-sidebar">
+      {/* Logo */}
+      <div className="admin-sidebar-logo">
+        <div className="admin-sidebar-logo-icon">C</div>
+        <span className="admin-sidebar-logo-text">CourseNET</span>
+      </div>
+
+      {/* Nav */}
+      <nav className="admin-sidebar-nav">
+        <div className="sidebar-section-label">Navigation</div>
+        {navItems.map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            className={`sidebar-link ${isActive(item.to) ? "active" : ""}`}
+          >
+            {item.icon}
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+
+      {/* Footer */}
+      <div className="admin-sidebar-footer">
+        <div className="admin-user-info">
+          <div className="user-avatar">
+            {user.name?.charAt(0)?.toUpperCase() || "A"}
+          </div>
+          <div className="admin-user-details">
+            <div className="admin-user-name">{user.name}</div>
+            <div className="admin-user-role">{roleLabel}</div>
+          </div>
+          <button
+            onClick={onLogout}
+            title="Logout"
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: "var(--text-muted)",
+              display: "flex",
+              alignItems: "center",
+              padding: "4px",
+              borderRadius: "6px",
+              transition: "color 0.2s",
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = "var(--rose-light)"}
+            onMouseLeave={e => e.currentTarget.style.color = "var(--text-muted)"}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
           </button>
         </div>
       </div>
-
-      <nav className="mb-3">
-        {isLectureAdmin && (
-          <Link to={pathFor()} className="btn btn-success me-2">
-            Dashboard
-          </Link>
-        )}
-
-        {isLectureAdmin && (
-          <Link to={pathFor("/organizations")} className="btn btn-secondary me-2">
-            Organizations
-          </Link>
-        )}
-
-        {isLectureAdmin && (
-          <Link to={pathFor("/courses")} className="btn btn-dark">
-            Courses
-          </Link>
-        )}
-
-        {isSystemAdmin && (
-          <Link to={pathFor("/users")} className="btn btn-primary">
-            Admins
-          </Link>
-        )}
-      </nav>
-    </>
+    </aside>
   );
 
   return (
@@ -72,8 +150,17 @@ function AdminPanel({ user, onLogin, onLogout, basePath = "/admin" }) {
         element={
           !user
             ? <Navigate to={loginPath} replace />
-            : isLectureAdmin
-              ? <>{adminHeader}<Dashboard /></>
+            : isAdmin
+              ? (
+                <div className="admin-layout">
+                  {adminSidebar}
+                  <main className="admin-content">
+                    <div className="admin-page">
+                      <Dashboard />
+                    </div>
+                  </main>
+                </div>
+              )
               : <Navigate to={pathFor("/users")} replace />
         }
       />
@@ -82,8 +169,17 @@ function AdminPanel({ user, onLogin, onLogout, basePath = "/admin" }) {
         element={
           !user
             ? <Navigate to={loginPath} replace />
-            : isLectureAdmin
-              ? <>{adminHeader}<Organizations /></>
+            : isAdmin
+              ? (
+                <div className="admin-layout">
+                  {adminSidebar}
+                  <main className="admin-content">
+                    <div className="admin-page">
+                      <Organizations />
+                    </div>
+                  </main>
+                </div>
+              )
               : <Navigate to={adminHome} replace />
         }
       />
@@ -92,8 +188,17 @@ function AdminPanel({ user, onLogin, onLogout, basePath = "/admin" }) {
         element={
           !user
             ? <Navigate to={loginPath} replace />
-            : isLectureAdmin
-              ? <>{adminHeader}<Courses /></>
+            : isAdmin
+              ? (
+                <div className="admin-layout">
+                  {adminSidebar}
+                  <main className="admin-content">
+                    <div className="admin-page">
+                      <Courses />
+                    </div>
+                  </main>
+                </div>
+              )
               : <Navigate to={adminHome} replace />
         }
       />
@@ -102,8 +207,15 @@ function AdminPanel({ user, onLogin, onLogout, basePath = "/admin" }) {
         element={
           !user
             ? <Navigate to={loginPath} replace />
-            : isLectureAdmin
-              ? <>{adminHeader}<CourseDetails backTo={pathFor("/courses")} /></>
+            : isAdmin
+              ? (
+                <div className="admin-layout">
+                  {adminSidebar}
+                  <main className="admin-content">
+                    <CourseDetails backTo={pathFor("/courses")} />
+                  </main>
+                </div>
+              )
               : <Navigate to={adminHome} replace />
         }
       />
@@ -113,7 +225,16 @@ function AdminPanel({ user, onLogin, onLogout, basePath = "/admin" }) {
           !user
             ? <Navigate to={loginPath} replace />
             : isSystemAdmin
-              ? <>{adminHeader}<AdminUsers /></>
+              ? (
+                <div className="admin-layout">
+                  {adminSidebar}
+                  <main className="admin-content">
+                    <div className="admin-page">
+                      <AdminUsers />
+                    </div>
+                  </main>
+                </div>
+              )
               : <Navigate to={adminHome} replace />
         }
       />

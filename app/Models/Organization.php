@@ -8,7 +8,8 @@ class Organization extends Model
 {
     protected $fillable = [
         'name',
-        'type'
+        'type',
+        'department'
     ];
 
     public function courses()

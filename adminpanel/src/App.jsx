@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import AdminPanel from "../../frontend/src/pages/AdminPanel.jsx";
-import { apiClient, clearAuthToken, getAuthToken } from "../../frontend/src/lib/auth";
+import { apiClient, clearAuthToken, getAuthToken } from "./lib/auth";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -36,26 +36,30 @@ function App() {
   };
 
   if (checkingAuth) {
-    return <div className="container mt-5">Checking login...</div>;
+    return (
+      <div className="loading-screen">
+        <div className="spinner"></div>
+        <span className="loading-text">Authenticating…</span>
+      </div>
+    );
   }
 
   return (
     <BrowserRouter>
-      <div className="container-fluid py-4 px-4">
-        <Routes>
-          <Route
-            path="/*"
-            element={
-              <AdminPanel
-                user={user}
-                onLogin={setUser}
-                onLogout={logout}
-                basePath=""
-              />
-            }
-          />
-        </Routes>
-      </div>
+      <div className="bg-mesh" />
+      <Routes>
+        <Route
+          path="/*"
+          element={
+            <AdminPanel
+              user={user}
+              onLogin={setUser}
+              onLogout={logout}
+              basePath=""
+            />
+          }
+        />
+      </Routes>
     </BrowserRouter>
   );
 }

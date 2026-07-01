@@ -22,7 +22,7 @@ Route::middleware('api.token')->group(function () {
         Route::delete('/admin-users/{user}', [AuthApiController::class, 'deleteAdminUser']);
     });
 
-    Route::middleware('role:'.User::ROLE_LECTURE_ADMIN)->group(function () {
+    Route::middleware('role:'.User::ROLE_SYSTEM_ADMIN.','.User::ROLE_LECTURE_ADMIN)->group(function () {
         /*
         |--------------------------------------------------------------------------
         | Organization API Routes
@@ -41,6 +41,7 @@ Route::middleware('api.token')->group(function () {
         */
 
         Route::post('/courses', [CourseApiController::class, 'store']);
+        Route::post('/courses/{id}', [CourseApiController::class, 'update']);
         Route::put('/courses/{id}', [CourseApiController::class, 'update']);
         Route::delete('/courses/{id}', [CourseApiController::class, 'destroy']);
     });

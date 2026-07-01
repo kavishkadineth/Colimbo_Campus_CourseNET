@@ -40,7 +40,7 @@ class CourseApiController extends Controller
 
     private function courseData(Request $request): array
     {
-        return [
+        $data = [
             'organization_id' => $request->organization_id,
             'course_name' => $request->course_name,
             'description' => $request->filled('description') ? $request->description : null,
@@ -55,6 +55,13 @@ class CourseApiController extends Controller
             'requirements' => $request->filled('requirements') ? $request->requirements : null,
             'more_details_link' => $request->filled('more_details_link') ? $request->more_details_link : null,
         ];
+
+        if ($request->hasFile('flyer')) {
+            $path = $request->file('flyer')->store('courses', 'public');
+            $data['flyer'] = '/storage/' . $path;
+        }
+
+        return $data;
     }
 
     public function destroy($id)

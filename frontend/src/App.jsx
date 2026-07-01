@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import AdminPanel from "./pages/AdminPanel";
 import CourseDetails from "./pages/CourseDetails";
 import UserCourses from "./pages/UserCourses";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import PublicLayout from "./components/PublicLayout";
 import { apiClient, clearAuthToken, getAuthToken } from "./lib/auth";
 
 function App() {
@@ -38,7 +42,12 @@ function App() {
   };
 
   if (checkingAuth) {
-    return <div className="container mt-5">Checking login...</div>;
+    return (
+      <div className="loading-screen">
+        <div className="spinner"></div>
+        <span className="loading-text">Authenticating…</span>
+      </div>
+    );
   }
 
   const isSystemAdmin = user?.role === "system_admin";
@@ -48,35 +57,30 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="container mt-4">
-        <Routes>
-          <Route
-            path="/"
-            element={isAdmin ? <Navigate to={adminHome} replace /> : <UserCourses />}
-          />
-          <Route
-            path="/courses/:id"
-            element={
-              isAdmin
-                ? <Navigate to={adminHome} replace />
-                : <CourseDetails backTo="/" />
-            }
-          />
-          <Route
-            path="/admin/*"
-            element={
-              <AdminPanel
-                user={user}
-                onLogin={setUser}
-                onLogout={logout}
-              />
-            }
-          />
-          <Route path="/login" element={<Navigate to="/admin/login" replace />} />
-          <Route path="/course-catalog" element={<Navigate to="/" replace />} />
-          <Route path="/course-catalog/:id" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
+      <div className="bg-mesh" />
+      <Routes>
+        {/* Admin Routes */}
+        <Route
+          path="/admin/*"
+          element={
+            <AdminPanel
+              user={user}
+              onLogin={setUser}
+              onLogout={logout}
+            />
+          }
+        />
+        <Route path="/login" element={<Navigate to="/admin/login" replace />} />
+        
+        {/* Public Routes with Layout */}
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/courses" element={<UserCourses />} />
+          <Route path="/courses/:id" element={<CourseDetails backTo="/courses" />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }
