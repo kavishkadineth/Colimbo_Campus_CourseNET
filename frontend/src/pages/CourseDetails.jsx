@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { apiClient } from "../lib/auth";
+import { apiClient, getBaseUrl } from "../lib/auth";
 
 function CourseDetails({ backTo = "/courses" }) {
   const { id } = useParams();
@@ -61,7 +61,7 @@ function CourseDetails({ backTo = "/courses" }) {
         style={{ 
           padding: "60px 24px", 
           textAlign: "left",
-          background: course.flyer ? `linear-gradient(to right, rgba(11,31,66,0.95) 0%, rgba(11,31,66,0.7) 100%), url(http://127.0.0.1:8000${course.flyer}) center/cover no-repeat` : undefined
+          background: course.flyer ? `linear-gradient(to right, rgba(11,31,66,0.95) 0%, rgba(11,31,66,0.7) 100%), url(${getBaseUrl()}${course.flyer}) center/cover no-repeat` : undefined
         }}
       >
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
@@ -151,16 +151,17 @@ function CourseDetails({ backTo = "/courses" }) {
 
             {/* Dates Card */}
             <div style={{ background: "white", padding: "32px", borderRadius: "12px", boxShadow: "0 4px 15px rgba(0,0,0,0.05)" }}>
-              <h3 style={{ color: "#0b1f42", fontSize: "18px", marginBottom: "16px" }}>Important Dates</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <h3 style={{ color: "#0b1f42", fontSize: "18px", marginBottom: "16px", borderBottom: "2px solid #f1f5f9", paddingBottom: "12px" }}>Important Dates</h3>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 {[
-                  { label: "Application Opens", value: course.application_start_date },
-                  { label: "Application Deadline", value: course.application_end_date },
-                  { label: "Program Starts", value: course.program_start_date },
-                  { label: "Program Ends", value: course.program_end_date },
-                ].map(({ label, value }) => (
-                  <div key={label} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid #f1f5f9", paddingBottom: "12px" }}>
-                    <span style={{ color: "#64748b", fontSize: "14px" }}>{label}</span>
+                  { label: "App. Opens", value: course.application_start_date, icon: "📅" },
+                  { label: "App. Deadline", value: course.application_end_date, icon: "⏰" },
+                  { label: "Starts", value: course.program_start_date, icon: "🚀" },
+                  { label: "Ends", value: course.program_end_date, icon: "🏁" },
+                ].map(({ label, value, icon }) => (
+                  <div key={label} style={{ background: "#f8fafc", padding: "16px", borderRadius: "8px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <span style={{ fontSize: "20px" }}>{icon}</span>
+                    <span style={{ color: "#64748b", fontSize: "12px", textTransform: "uppercase", fontWeight: 700 }}>{label}</span>
                     <strong style={{ color: value ? "#0f172a" : "#94a3b8", fontSize: "14px" }}>{value || "TBA"}</strong>
                   </div>
                 ))}
