@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { apiClient } from "../lib/auth";
+import { apiClient, getBaseUrl } from "../lib/auth";
 
 function Home() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     apiClient
@@ -16,6 +18,20 @@ function Home() {
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
   }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/courses?q=${encodeURIComponent(searchQuery)}`);
+    } else {
+      navigate('/courses');
+    }
+  };
+
+  const partners = [
+    "University of Oxford", "Stanford University", "MIT", 
+    "Harvard University", "Cambridge University", "National University of Singapore"
+  ];
 
   return (
     <div className="home-page">
@@ -29,12 +45,33 @@ function Home() {
             <span>NEXT DEGREE</span>
           </h1>
           <p className="hero-subtitle">EXPLORE THOUSANDS OF PROGRAMMES</p>
-          <div className="hero-actions">
+          
+          <form className="hero-search-form" onSubmit={handleSearch}>
+            <input 
+              type="text" 
+              placeholder="What do you want to learn today?" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button type="submit">Search</button>
+          </form>
+
+          <div className="hero-actions" style={{ marginTop: '24px' }}>
             <Link to="/courses" className="btn-hero-primary">Browse Catalog</Link>
             <Link to="/about" className="btn-hero-secondary">How It Works</Link>
           </div>
         </div>
       </section>
+
+      {/* Marquee Section */}
+      <div className="marquee-container">
+        <div className="marquee-content">
+          {/* Double the list for infinite scroll illusion */}
+          {[...partners, ...partners].map((partner, idx) => (
+            <span key={idx}>{partner}</span>
+          ))}
+        </div>
+      </div>
 
       {/* Sub Navigation Bar */}
       <div className="sub-nav-bar">
@@ -77,14 +114,26 @@ function Home() {
         
         <div className="courses-grid">
           {loading ? (
-            <div className="loading-state">Loading programmes...</div>
+            /* Skeleton Loaders */
+            [1, 2, 3].map((n) => (
+              <div key={n} className="skeleton-card skeleton">
+                <div className="skeleton-img"></div>
+                <div style={{ padding: "24px" }}>
+                  <div className="skeleton-text" style={{ width: "40%", background: "rgba(0,0,0,0.1)" }}></div>
+                  <div className="skeleton-text" style={{ width: "90%", height: "24px", background: "rgba(0,0,0,0.1)", marginTop: "12px" }}></div>
+                  <div className="skeleton-text" style={{ width: "70%", height: "24px", background: "rgba(0,0,0,0.1)" }}></div>
+                  <div className="skeleton-text" style={{ width: "100%", marginTop: "24px", background: "rgba(0,0,0,0.1)" }}></div>
+                  <div className="skeleton-text" style={{ width: "80%", background: "rgba(0,0,0,0.1)" }}></div>
+                </div>
+              </div>
+            ))
           ) : courses.length > 0 ? (
             courses.map((course) => (
               <div key={course.id} className="public-course-card">
                 <div 
                   className="course-card-image"
                   style={course.flyer ? { 
-                    backgroundImage: `url(${import.meta.env.VITE_API_BASE_URL?.replace('/api','') || 'http://127.0.0.1:8000'}${course.flyer})`
+                    backgroundImage: `url(${getBaseUrl()}${course.flyer})`
                   } : {}}
                 >
                   {course.flyer && <div style={{ position:'absolute', inset:0, background:'linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 60%)' }} />}

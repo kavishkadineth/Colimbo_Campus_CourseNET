@@ -10,16 +10,21 @@ function Dashboard() {
   const [organizationsCount, setOrganizationsCount] = useState(0);
   const [coursesCount, setCoursesCount] = useState(0);
   const [courses, setCourses] = useState([]);
+  const [inquiriesCount, setInquiriesCount] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       apiClient.get("/organizations"),
       apiClient.get("/courses"),
-    ]).then(([orgsRes, coursesRes]) => {
+      apiClient.get("/inquiries/unread-count").catch(() => ({ data: { count: null } }))
+    ]).then(([orgsRes, coursesRes, inqRes]) => {
       setOrganizationsCount(orgsRes.data.length);
       setCoursesCount(coursesRes.data.length);
       setCourses(coursesRes.data);
+      if (inqRes.data && inqRes.data.count !== null) {
+        setInquiriesCount(inqRes.data.count);
+      }
     }).catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, []);
@@ -121,6 +126,21 @@ function Dashboard() {
           <div className="stat-value">{loading ? "—" : closedCourses}</div>
           <div className="stat-label">Closed Courses</div>
         </div>
+        
+        {inquiriesCount !== null && (
+          <Link to="/admin/inquiries" style={{ textDecoration: "none" }}>
+            <div className="stat-card rose" style={{ cursor: "pointer", transition: "transform 0.2s" }} onMouseEnter={e => e.currentTarget.style.transform = "translateY(-5px)"} onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}>
+              <div className="stat-icon rose">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+              </div>
+              <div className="stat-value">{loading ? "—" : inquiriesCount}</div>
+              <div className="stat-label">New Inquiries</div>
+            </div>
+          </Link>
+        )}
       </div>
 
       {/* Charts + Recent Courses */}

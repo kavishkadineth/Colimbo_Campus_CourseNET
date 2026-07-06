@@ -96,9 +96,7 @@ function Courses() {
     if (flyer) formData.append("flyer", flyer);
 
     apiClient
-      .post("/courses", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      })
+      .post("/courses", formData)
       .then(() => {
         resetForm();
         setSuccess("Course created successfully.");
@@ -153,9 +151,7 @@ function Courses() {
     if (flyer) formData.append("flyer", flyer);
 
     apiClient
-      .post(`/courses/${editId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      })
+      .post(`/courses/${editId}`, formData)
       .then(() => {
         setEditId(null);
         resetForm();
