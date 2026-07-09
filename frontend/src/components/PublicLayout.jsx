@@ -57,6 +57,7 @@ function PublicLayout() {
             <Link to="/" className={`public-nav-link ${isActive("/") ? "active" : ""}`}>HOME</Link>
             <Link to="/about" className={`public-nav-link ${isActive("/about") ? "active" : ""}`}>ABOUT US</Link>
             <Link to="/courses" className={`public-nav-link ${isActive("/courses") ? "active" : ""}`}>COURSES</Link>
+            <Link to="/universities" className={`public-nav-link ${isActive("/universities") ? "active" : ""}`}>UNIVERSITIES</Link>
             <Link to="/contact" className={`public-nav-link ${isActive("/contact") ? "active" : ""}`}>CONTACT</Link>
           </nav>
         </div>
@@ -80,6 +81,7 @@ function PublicLayout() {
               <ul>
                 <li><Link to="/">Home</Link></li>
                 <li><Link to="/courses">Programmes</Link></li>
+                <li><Link to="/universities">Universities</Link></li>
                 <li><Link to="/about">About Us</Link></li>
                 <li><Link to="/contact">Contact</Link></li>
               </ul>

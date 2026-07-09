@@ -7,6 +7,7 @@ import UserCourses from "./pages/UserCourses";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import PublicOrganizations from "./pages/PublicOrganizations";
 import PublicLayout from "./components/PublicLayout";
 import { apiClient, clearAuthToken, getAuthToken } from "./lib/auth";
 
@@ -79,6 +80,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/courses" element={<UserCourses />} />
           <Route path="/courses/:id" element={<CourseDetails backTo="/courses" />} />
+          <Route path="/universities" element={<PublicOrganizations />} />
         </Route>
       </Routes>
     </BrowserRouter>

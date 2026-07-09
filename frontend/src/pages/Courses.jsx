@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { apiClient } from "../lib/auth";
+import { apiClient, getBaseUrl } from "../lib/auth";
 
 function Courses() {
   const [courses, setCourses] = useState([]);
@@ -21,6 +21,7 @@ function Courses() {
   const [requirements, setRequirements] = useState("");
   const [moreDetailsLink, setMoreDetailsLink] = useState("");
   const [flyer, setFlyer] = useState(null);
+  const [existingFlyer, setExistingFlyer] = useState("");
 
   // Edit State
   const [editId, setEditId] = useState(null);
@@ -71,6 +72,7 @@ function Courses() {
     setRequirements("");
     setMoreDetailsLink("");
     setFlyer(null);
+    setExistingFlyer("");
   };
 
   const addCourse = (e) => {
@@ -124,6 +126,7 @@ function Courses() {
     setIntake(course.intake || "");
     setRequirements(course.requirements || "");
     setMoreDetailsLink(course.more_details_link || "");
+    setExistingFlyer(course.flyer || "");
     setIsEditModalOpen(true);
   };
 
@@ -255,11 +258,34 @@ function Courses() {
         
         <div className="form-group">
           <label className="form-label">Course Photo (Optional)</label>
+          {existingFlyer && (
+            <div style={{ marginBottom: "10px", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>Current Photo:</span>
+              <img 
+                src={`${getBaseUrl()}${existingFlyer}`} 
+                alt="Current Course Flyer" 
+                style={{ width: "120px", height: "80px", objectFit: "cover", borderRadius: "6px", border: "1px solid var(--border)" }} 
+              />
+            </div>
+          )}
           <input
             type="file"
             className="form-control"
             accept="image/*"
-            onChange={(e) => setFlyer(e.target.files[0])}
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                  alert("The selected image is too large (maximum size allowed is 2MB). Please upload a smaller image.");
+                  e.target.value = ""; // Clear input
+                  setFlyer(null);
+                } else {
+                  setFlyer(file);
+                }
+              } else {
+                setFlyer(null);
+              }
+            }}
           />
           <small style={{ color: "var(--text-muted)", marginTop: "4px", display: "block" }}>
             Upload a high-quality image for the course card.
@@ -277,8 +303,11 @@ function Courses() {
               className="form-control"
               placeholder="e.g. 150000"
               value={courseFee}
+              min="0"
+              max="999999999999"
               onChange={(e) => setCourseFee(e.target.value)}
             />
+            <small style={{ color: "var(--text-muted)", marginTop: "4px", display: "block" }}>Max: LKR 999,999,999,999</small>
           </div>
           <div className="form-group">
             <label className="form-label">Application Fee (LKR)</label>
@@ -287,8 +316,11 @@ function Courses() {
               className="form-control"
               placeholder="e.g. 5000"
               value={applicationFee}
+              min="0"
+              max="999999999999"
               onChange={(e) => setApplicationFee(e.target.value)}
             />
+            <small style={{ color: "var(--text-muted)", marginTop: "4px", display: "block" }}>Max: LKR 999,999,999,999</small>
           </div>
         </div>
 
@@ -450,6 +482,7 @@ function Courses() {
           <table className="table">
             <thead>
               <tr>
+                <th>Photo</th>
                 <th>ID</th>
                 <th>Course Name</th>
                 <th>Organization</th>
@@ -463,6 +496,19 @@ function Courses() {
             <tbody>
               {filteredCourses.map((course) => (
                 <tr key={course.id}>
+                  <td>
+                    {course.flyer ? (
+                      <img 
+                        src={`${getBaseUrl()}${course.flyer}`} 
+                        alt="Course thumbnail" 
+                        style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "4px" }}
+                      />
+                    ) : (
+                      <div style={{ width: "40px", height: "40px", backgroundColor: "rgba(255,255,255,0.06)", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10px", color: "var(--text-muted)", border: "1px solid var(--border)" }}>
+                        No Image
+                      </div>
+                    )}
+                  </td>
                   <td style={{ color: "var(--text-muted)", fontFamily: "monospace" }}>#{course.id}</td>
                   <td><strong>{course.course_name}</strong></td>
                   <td>{course.organization?.name || "—"}</td>
@@ -511,7 +557,7 @@ function Courses() {
               
               {filteredCourses.length === 0 && (
                 <tr>
-                  <td colSpan="8" style={{ textAlign: "center", padding: "48px 24px" }}>
+                  <td colSpan="9" style={{ textAlign: "center", padding: "48px 24px" }}>
                     <div className="empty-state" style={{ padding: 0 }}>
                       <div className="empty-state-icon" style={{ fontSize: "24px", width: "48px", height: "48px" }}>📚</div>
                       <h3 style={{ fontSize: "16px" }}>No courses found</h3>

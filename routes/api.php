@@ -11,6 +11,7 @@ Route::post('/login', [AuthApiController::class, 'login']);
 Route::post('/demo-login', [AuthApiController::class, 'demoLogin']);
 Route::get('/courses', [CourseApiController::class, 'index']);
 Route::get('/courses/{id}', [CourseApiController::class, 'show']);
+Route::get('/organizations', [OrganizationApiController::class, 'index']);
 
 // Public: submit an inquiry (no auth required)
 Route::post('/inquiries', [InquiryApiController::class, 'store']);
@@ -39,7 +40,6 @@ Route::middleware('api.token')->group(function () {
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/organizations', [OrganizationApiController::class, 'index']);
         Route::post('/organizations', [OrganizationApiController::class, 'store']);
         Route::put('/organizations/{id}', [OrganizationApiController::class, 'update']);
         Route::delete('/organizations/{id}', [OrganizationApiController::class, 'destroy']);

@@ -24,6 +24,12 @@ class CourseApiController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'organization_id' => 'required|exists:organizations,id',
+            'course_name' => 'required|string|max:255',
+            'flyer' => 'nullable|image|max:2048', // max 2MB
+        ]);
+
         $course = Course::create($this->courseData($request));
 
         return response()->json($course, 201);
@@ -31,6 +37,12 @@ class CourseApiController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'organization_id' => 'required|exists:organizations,id',
+            'course_name' => 'required|string|max:255',
+            'flyer' => 'nullable|image|max:2048', // max 2MB
+        ]);
+
         $course = Course::findOrFail($id);
 
         $course->update($this->courseData($request));

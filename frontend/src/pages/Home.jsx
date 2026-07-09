@@ -78,7 +78,7 @@ function Home() {
         <div className="sub-nav-container">
           <Link to="/" className="active">HOME</Link>
           <Link to="/courses">ALL COURSES</Link>
-          <Link to="/courses">UNIVERSITIES</Link>
+          <Link to="/universities">UNIVERSITIES</Link>
           <Link to="/courses">CATEGORIES</Link>
           <Link to="/contact">SUPPORT</Link>
         </div>

@@ -9,6 +9,10 @@ function UserCourses() {
   // Initialize state from URL params if present
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  // Org filter from URL (set by Universities page)
+  const orgId = searchParams.get("org_id") ? parseInt(searchParams.get("org_id")) : null;
+  const orgName = searchParams.get("org_name") || "";
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -37,6 +41,9 @@ function UserCourses() {
   }, [searchTerm, setSearchParams]);
 
   const filteredCourses = courses.filter((course) => {
+    // Org ID filter (from Universities page)
+    if (orgId && course.organization_id !== orgId) return false;
+
     // Search text filter
     const searchText = [
       course.course_name,
@@ -48,7 +55,7 @@ function UserCourses() {
       .join(" ")
       .toLowerCase();
     
-    const matchesSearch = searchText.includes(searchTerm.toLowerCase());
+    const matchesSearch = !searchTerm || searchText.includes(searchTerm.toLowerCase());
     
     // Status filter
     const matchesStatus = statusFilter === "all" || 
@@ -60,8 +67,8 @@ function UserCourses() {
   return (
     <div className="public-page">
       <div className="public-page-header">
-        <h1>All Programmes</h1>
-        <p>Browse our comprehensive catalog of degrees and courses</p>
+        <h1>{orgName ? `${orgName}` : "All Programmes"}</h1>
+        <p>{orgName ? `Courses offered by ${orgName}` : "Browse our comprehensive catalog of degrees and courses"}</p>
       </div>
 
       <div className="public-container">
@@ -71,7 +78,13 @@ function UserCourses() {
           </div>
         )}
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", marginTop: "20px" }}>
+        {orgName && (
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "20px", marginBottom: "8px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px", padding: "12px 16px" }}>
+            <span style={{ fontSize: "14px", color: "#1e40af", fontWeight: 600 }}>🏛️ Filtered by: <strong>{orgName}</strong></span>
+            <Link to="/courses" style={{ fontSize: "13px", color: "#3b82f6", textDecoration: "underline", marginLeft: "auto" }}>✕ Clear filter</Link>
+          </div>
+        )}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", marginTop: "12px" }}>
           <div style={{ color: "#64748b", fontWeight: 600, fontSize: "15px" }}>
             Showing {loading ? "..." : filteredCourses.length} results
           </div>
