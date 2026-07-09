@@ -131,22 +131,13 @@ function CourseDetails({ backTo = "/courses" }) {
                 </div>
               )}
 
-              {course.more_details_link ? (
-                <a
-                  href={course.more_details_link}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn-public-submit"
-                  style={{ display: "block", textAlign: "center", textDecoration: "none" }}
-                  id={`course-apply-${course.id}`}
-                >
-                  Apply / More Details
-                </a>
-              ) : (
-                <button disabled className="btn-public-submit" style={{ opacity: 0.5, cursor: "not-allowed" }}>
-                  Details Unavailable
-                </button>
-              )}
+              <Link
+                to={`/apply/${course.id}`}
+                className="btn-public-submit"
+                style={{ display: "block", textAlign: "center", textDecoration: "none" }}
+              >
+                Apply Now
+              </Link>
             </div>
 
             {/* Dates Card */}

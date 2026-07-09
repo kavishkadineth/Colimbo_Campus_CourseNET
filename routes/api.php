@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthApiController;
 use App\Http\Controllers\Api\OrganizationApiController;
 use App\Http\Controllers\Api\CourseApiController;
 use App\Http\Controllers\Api\InquiryApiController;
+use App\Http\Controllers\Api\ApplicationApiController;
 use App\Models\User;
 
 Route::post('/login', [AuthApiController::class, 'login']);
@@ -15,6 +16,9 @@ Route::get('/organizations', [OrganizationApiController::class, 'index']);
 
 // Public: submit an inquiry (no auth required)
 Route::post('/inquiries', [InquiryApiController::class, 'store']);
+
+// Public: submit a course application
+Route::post('/applications', [ApplicationApiController::class, 'store']);
 
 Route::middleware('api.token')->group(function () {
     Route::get('/me', [AuthApiController::class, 'me']);
@@ -31,6 +35,11 @@ Route::middleware('api.token')->group(function () {
         Route::get('/inquiries/unread-count', [InquiryApiController::class, 'unreadCount']);
         Route::get('/inquiries/{id}', [InquiryApiController::class, 'show']);
         Route::delete('/inquiries/{id}', [InquiryApiController::class, 'destroy']);
+
+        // Applications — system admin only
+        Route::get('/applications', [ApplicationApiController::class, 'index']);
+        Route::put('/applications/{id}/status', [ApplicationApiController::class, 'updateStatus']);
+        Route::delete('/applications/{id}', [ApplicationApiController::class, 'destroy']);
     });
 
     Route::middleware('role:'.User::ROLE_SYSTEM_ADMIN.','.User::ROLE_LECTURE_ADMIN)->group(function () {

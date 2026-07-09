@@ -4,16 +4,20 @@ import { apiClient, getBaseUrl } from "../lib/auth";
 
 function Home() {
   const [courses, setCourses] = useState([]);
+  const [organizations, setOrganizations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    apiClient
-      .get("/courses")
-      .then((response) => {
+    Promise.all([
+      apiClient.get("/courses"),
+      apiClient.get("/organizations")
+    ])
+      .then(([coursesRes, orgsRes]) => {
         // Just take a few featured courses
-        setCourses(response.data.slice(0, 3));
+        setCourses(coursesRes.data.slice(0, 3));
+        setOrganizations(orgsRes.data);
       })
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
@@ -28,10 +32,12 @@ function Home() {
     }
   };
 
-  const partners = [
-    "University of Oxford", "Stanford University", "MIT", 
-    "Harvard University", "Cambridge University", "National University of Singapore"
-  ];
+  const partners = organizations.length > 0 
+    ? organizations.map(org => `${org.name.toUpperCase()}${org.type ? ` (${org.type.toUpperCase()})` : ''}`)
+    : [
+        "UNIVERSITY OF OXFORD", "STANFORD UNIVERSITY", "MIT", 
+        "HARVARD UNIVERSITY", "CAMBRIDGE UNIVERSITY", "NATIONAL UNIVERSITY OF SINGAPORE"
+      ];
 
   return (
     <div className="home-page">
